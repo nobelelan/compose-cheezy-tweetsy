@@ -1,5 +1,6 @@
 package com.example.tweetsy.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tweetsy.models.TweetListItem
@@ -10,7 +11,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(private val repository: TweetRepository): ViewModel() {
+class DetailViewModel @Inject constructor(
+    private val repository: TweetRepository,
+    private val savedStateHandle: SavedStateHandle
+): ViewModel() {
 
 
     val tweets: StateFlow<List<TweetListItem>>
@@ -18,7 +22,8 @@ class DetailViewModel @Inject constructor(private val repository: TweetRepositor
 
     init {
         viewModelScope.launch {
-            repository.getTweets("Fashion")
+            val category = savedStateHandle.get<String>("category") ?: "Fashion"
+            repository.getTweets(category)
         }
     }
 }
